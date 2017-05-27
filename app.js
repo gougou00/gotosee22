@@ -4,10 +4,11 @@ var mongoose = require('mongoose')
 // _.extend用新对象里的字段替换老的字段
 var _ = require('underscore')
 var Movie = require('./models/movie')
+var User = require('./models/user')
 var bodyParser = require('body-parser')
 var port = process.env.PORT || 3000
 var app = express()
-// 连接mongodb本地数据库
+// 连接mongodb本地
 // Mongoose: mpromise (mongoose's default promise library) is deprecated ...
 mongoose.Promise = global.Promise
 mongoose.connect('mongodb://localhost/gotosee')
@@ -41,6 +42,78 @@ app.get('/', function (req, res) {
 			// 	_id: 2,
 			// 	poster: 'http://p5.7k7kimg.cn/m/201703/0109/107-1F3010932360-L.jpg'
 			// }]
+		})
+	})
+})
+
+// signup
+app.post('/user/signup', function(req, res) {
+	var _user = req.body.user
+	// console.log(_user)
+	
+	User.findOne({name: _user.name}, function (err, user) {
+		if (err) {
+			console.log(err)
+		}
+		if (user) {
+			return res.redirect('/')
+		}
+		else {
+			var user = new User(_user)
+
+			user.save(function(err, user) {
+				if (err) {
+					console.log(err)
+				}
+				console.log('成功了呢!')
+				// 成功后返回用户列表页
+				res.redirect('/admin/userlist')
+			})
+		}
+	})
+})
+
+// signin
+app.post('/user/signin', function (req, res) {
+	var _user = req.body.user
+	var name = _user.name
+	var password = _user.password
+	User.findOne({name: name}, function (err, user) {
+		if (err) {
+			console.log(err)
+		}
+
+		if (!user) {
+			// console.log("hehe")
+			return res.redirect('/')
+		}
+
+		user.comparePassword(password, function (err, isMatch) {
+			if (err) {
+				console.log(err)
+			}
+
+			if (isMatch) {
+				console.log('Password is matched!')
+				return res.redirect('/')
+			}
+			else {
+				console.log('Password is not matched!')
+			}
+		})
+	})
+})
+
+// userlist page
+app.get('/admin/userlist', function (req, res) {
+	User.fetch(function (err, users) {
+		if (err) {
+			console.log(err)
+		}
+
+		res.render('userlist', {
+			title: 'gotosee 用户列表页',
+			users: users
 		})
 	})
 })

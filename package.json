@@ -117,6 +117,7 @@
     "wordwrap": "^0.0.3"
   },
   "devDependencies": {
+    "bcrypt-nodejs": "^0.0.3",
     "grunt": "^1.0.1",
     "grunt-concurrent": "^2.3.1",
     "grunt-contrib-watch": "^1.0.0",
