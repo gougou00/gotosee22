@@ -44,15 +44,22 @@ app.listen(port)
 
 console.log('gotosee22 started on port ' + port)
 
+// pre handle user
+app.use(function (req, res, next) {
+	var _user = req.session.user
+	// app.locals.user = _user
+	if (_user) {
+		app.locals.user = _user
+	}
+
+	return next()
+})
+
 // index page
 app.get('/', function (req, res) {
 	console.log('user in session: ')
 	console.log(req.session.user)
-	var _user = req.session.user
-	app.locals.user = _user
-	// if (_user) {
-	// 	app.locals.user = _user
-	// }
+	
 	Movie.fetch(function (err, movies) {
 		if (err) {
 			console.log(err)
