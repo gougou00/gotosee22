@@ -1,8 +1,6 @@
 var express = require('express')
 var path = require('path')
 var mongoose = require('mongoose')
-
-
 var bodyParser = require('body-parser')
 // 引入express-session中间件
 var session = require('express-session')
@@ -17,11 +15,10 @@ var logger = require('morgan')
 mongoose.Promise = global.Promise
 mongoose.connect(dbUrl)
 
-app.set('views', './views/pages')
+app.set('views', './app/views/pages')
 app.set('view engine', 'jade')
 // app.use(express.bodyParser())
 app.use(bodyParser.urlencoded({extended: true}))
-
 // express.session可以保存b/s的对话
 // 需要express.cookieParser中间件的支持才能工作
 // app.use(express.cookieParser())
@@ -42,12 +39,11 @@ if ('development' === app.get('env')) {
 	mongoose.set('debug', true)
 }
 
-require('./config/routes')(app)
 
 app.use(express.static(path.join(__dirname, 'public')))
 // 载入moment模块，格式化日期
 app.locals.moment = require('moment')
 app.listen(port)
 
+require('./config/routes')(app)
 console.log('gotosee22 started on port ' + port)
-
