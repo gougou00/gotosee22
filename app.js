@@ -1,22 +1,42 @@
 var express = require('express')
 var path = require('path')
 var mongoose = require('mongoose')
+
 // _.extend用新对象里的字段替换老的字段
 var _ = require('underscore')
 var Movie = require('./models/movie')
 var User = require('./models/user')
 var bodyParser = require('body-parser')
+// 引入express-session中间件
+var session = require('express-session')
+// 引入持久化session的中间件
+var mongoStore = require('connect-mongo')(session)
 var port = process.env.PORT || 3000
 var app = express()
+var dbUrl = 'mongodb://localhost/gotosee'
 // 连接mongodb本地
 // Mongoose: mpromise (mongoose's default promise library) is deprecated ...
 mongoose.Promise = global.Promise
-mongoose.connect('mongodb://localhost/gotosee')
+mongoose.connect(dbUrl)
 
 app.set('views', './views/pages')
 app.set('view engine', 'jade')
 // app.use(express.bodyParser())
 app.use(bodyParser.urlencoded({extended: true}))
+
+// express.session可以保存b/s的对话
+// 需要express.cookieParser中间件的支持才能工作
+// app.use(express.cookieParser())
+// express 4.x已分离，不需要cookieParser
+// 持久化session
+app.use(session({
+	secret: 'gotosee',
+	store: new mongoStore({
+		url: dbUrl,
+		collection: 'sessions'
+	})
+}))
+
 app.use(express.static(path.join(__dirname, 'public')))
 // 载入moment模块，格式化日期
 app.locals.moment = require('moment')
@@ -26,6 +46,8 @@ console.log('gotosee22 started on port ' + port)
 
 // index page
 app.get('/', function (req, res) {
+	console.log('user in session: ')
+	console.log(req.session.user)
 	Movie.fetch(function (err, movies) {
 		if (err) {
 			console.log(err)
@@ -94,7 +116,8 @@ app.post('/user/signin', function (req, res) {
 			}
 
 			if (isMatch) {
-				console.log('Password is matched!')
+				// console.log('Password is matched!')
+				req.session.user = user
 				return res.redirect('/')
 			}
 			else {
