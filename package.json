@@ -73,6 +73,7 @@
     "mongodb": "^2.2.26",
     "mongodb-core": "^2.1.10",
     "mongoose": "^4.10.2",
+    "morgan": "^1.8.2",
     "mpath": "^0.2.1",
     "mpromise": "^0.5.5",
     "mquery": "^2.3.1",
