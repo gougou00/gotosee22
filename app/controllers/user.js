@@ -19,11 +19,13 @@ exports.signup = function(req, res) {
 		if (err) {
 			console.log(err)
 		}
+		// console.log(user)
 		if (user) {
 			return res.redirect('/signin')
 		}
 		else {
 			var user = new User(_user)
+			console.log('yeah')
 
 			user.save(function(err, user) {
 				if (err) {

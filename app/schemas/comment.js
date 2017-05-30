@@ -7,7 +7,12 @@ var CommentSchema = new Schema({
 	// 当前要评论的电影
 	movie: {type: ObjectId, ref: 'Movie'},
 	from: {type: ObjectId, ref: 'User'},
-	to: {type: ObjectId, ref: 'User'},
+	reply: [{
+		from: {type: ObjectId, ref: 'User'},
+		to: {type: ObjectId, ref: 'User'},
+		content: String
+	}],
+	
 	content: String,
 	// 操作数据的时间记录
 	meta: {
