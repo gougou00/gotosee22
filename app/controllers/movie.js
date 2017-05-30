@@ -1,4 +1,5 @@
 var Movie = require('../models/movie')
+var Comment = require('../models/comment')
 // _.extend用新对象里的字段替换老的字段
 var _ = require('underscore')
 
@@ -7,21 +8,19 @@ exports.detail = function (req, res) {
 	var id = req.params.id
 
 	Movie.findById(id, function (err, movie) {
-		res.render('detail', {
-			// title: 'gotosee ' + movie.title,
-			title: 'gotosee 详情页',
-			movie: movie
-			// movie: {
-			// 	director: 'momocha',
-			// 	country: '中国',
-			// 	title: 'xiarimomocha',
-			// 	year: 2017,
-			// 	poster: 'http://p5.7k7kimg.cn/m/201703/0109/107-1F3010932360-L.jpg',
-			// 	language: 'english',
-			// 	flash: 'http://player.youku.com/player.php/sid/XMTY0NzYwNjI0MA==/v.swf',
-			// 	summary: 'good game'
-			// }
-		})
+		Comment
+			.find({movie: id})
+			.populate('from', 'name')
+			.exec(function(err, comments) {
+				console.log('comments: ')
+				console.log(comments)
+				res.render('detail', {
+					// title: 'gotosee ' + movie.title,
+					title: 'gotosee 详情页',
+					movie: movie,
+					comments: comments
+				})
+			})
 	})
 }
 

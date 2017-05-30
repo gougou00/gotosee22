@@ -1,6 +1,7 @@
 var Index = require('../app/controllers/index')
 var User = require('../app/controllers/user')
 var Movie = require('../app/controllers/movie')
+var Comment = require('../app/controllers/comment')
 // _.extend用新对象里的字段替换老的字段
 var _ = require('underscore')
 
@@ -8,10 +9,9 @@ module.exports = function(app) {
 	// pre handle user
 	app.use(function (req, res, next) {
 		var _user = req.session.user
+		
 		app.locals.user = _user
-		// if (_user) {
-		// 	app.locals.user = _user
-		// }
+		
 		next()
 	})
 
@@ -37,4 +37,7 @@ module.exports = function(app) {
 	app.get('/admin/movie/list', User.signinRequired, User.adminRequired, Movie.list)
 	app.delete('/admin/movie/list', User.signinRequired, User.adminRequired, Movie.del)
 	
+
+	// comment
+	app.post('/user/comment', User.signinRequired, Comment.save)
 }
