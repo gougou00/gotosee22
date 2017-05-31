@@ -3,19 +3,9 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema
 var ObjectId = Schema.Types.ObjectId
 // 调用mongoose的schema方法
-var MovieSchema = new Schema({
-	director: String,
-	title: String,
-	language: String,
-	country: String,
-	summary: String,
-	flash: String,
-	poster: String,
-	year: Number,
-	category: {
-		type: ObjectId,
-		ref: 'Category'
-	},
+var CategorySchema = new Schema({
+	name: String,
+	movies: [{type: ObjectId, ref: 'Movie'}],
 	// 操作数据的时间记录
 	meta: {
 		createAt: {
@@ -29,7 +19,7 @@ var MovieSchema = new Schema({
 	}
 })
 
-MovieSchema.pre('save', function (next) {
+CategorySchema.pre('save', function (next) {
 	// 判断数据是否是新添加的
 	if (this.isNew) {
 		this.meta.createAt = this.meta.updateAt = Date.now()
@@ -41,7 +31,7 @@ MovieSchema.pre('save', function (next) {
 	next()
 })
 
-MovieSchema.statics = {
+CategorySchema.statics = {
 	fetch: function (cb) {
 		return this
 			.find({})
@@ -56,4 +46,4 @@ MovieSchema.statics = {
 }
 
 // 导出模式
-module.exports = MovieSchema
+module.exports = CategorySchema

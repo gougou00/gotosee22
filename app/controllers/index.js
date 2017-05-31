@@ -1,25 +1,17 @@
 var Movie = require('../models/movie')
+var Category = require('../models/category')
 // index page
 exports.index = function (req, res) {
-	console.log('user in session: ')
-	console.log(req.session.user)
-	
-	Movie.fetch(function (err, movies) {
-		if (err) {
-			console.log(err)
-		}
-		res.render('index', {
-			title: 'gotosee 首页',
-			movies: movies
-			// movies: [{
-			// 	title: 'momocha',
-			// 	_id: 1,
-			// 	poster: 'http://p5.7k7kimg.cn/m/201703/0109/107-1F3010932360-L.jpg'
-			// },{
-			// 	title: 'momocha',
-			// 	_id: 2,
-			// 	poster: 'http://p5.7k7kimg.cn/m/201703/0109/107-1F3010932360-L.jpg'
-			// }]
+	Category
+		.find({})
+		.populate({path: 'movies', options: {limit: 5}})
+		.exec(function(err, categories) {
+			if (err) {
+				console.log(err)
+			}
+			res.render('index', {
+				title: 'gotosee 首页',
+				categories: categories
+			})
 		})
-	})
 }
