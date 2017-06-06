@@ -4,7 +4,7 @@ var Category = require('../models/category')
 exports.index = function (req, res) {
 	Category
 		.find({})
-		.populate({path: 'movies', options: {limit: 5}})
+		.populate({path: 'movies', select: 'title poster', options: {limit: 6}})
 		.exec(function(err, categories) {
 			if (err) {
 				console.log(err)
@@ -12,6 +12,35 @@ exports.index = function (req, res) {
 			res.render('index', {
 				title: 'gotosee 首页',
 				categories: categories
+			})
+		})
+}
+
+// search page
+exports.search = function (req, res) {
+	var catId = req.query.cat
+	var page = parseInt(req.query.p, 10)
+	var count = 2
+	var index = page * count
+
+	Category
+		.find({_id: catId})
+		.populate({path: 'movies', select: 'title poster'})
+		.exec(function(err, categories) {
+			if (err) {
+				console.log(err)
+			}
+			var category = categories[0] || {}
+			var movies = category.movies || []
+			var results = movies.slice(index, index + count)
+
+			res.render('results', {
+				title: 'gotosee 结果列表页',
+				keyword: category.name,
+				currentPage: (page + 1),
+				query: 'cat=' + catId,
+				totalPage: Math.ceil(movies.length / count),
+				movies: results
 			})
 		})
 }
