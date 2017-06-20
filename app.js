@@ -23,6 +23,9 @@ app.use(bodyParser.urlencoded({extended: true}))
 // 需要express.cookieParser中间件的支持才能工作
 // app.use(express.cookieParser())
 // express 4.x已分离，不需要cookieParser
+
+// app.use(express.multipart())
+app.use(require('connect-multiparty')())
 // 持久化session
 app.use(session({
 	secret: 'gotosee',
